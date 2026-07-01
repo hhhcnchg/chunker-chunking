@@ -1,0 +1,26 @@
+# ============================================================
+# Rigid Chunker 配置示例
+# 复制为 .config.py，去掉注释，填入自己的值
+# ============================================================
+
+# --- 嵌入模型 ---
+# 优先使用本地模型，不填则自动从 HuggingFace 下载
+EMBEDDING_MODEL_PATH = ""       # 例如 "d:/models/bge-small-zh-v1.5"
+EMBEDDING_MODEL_NAME = "BAAI/bge-small-zh-v1.5"  # HuggingFace 模型名
+
+# --- 本地 LLM 权重目录 ---
+# 程序会自动扫描这些目录中是否有 DeepSeek-R1/Qwen 等模型文件
+LOCAL_MODEL_DIRS = [
+    # 把自己的模型目录加在这里，例如：
+    # "d:/models",
+    # os.path.expanduser("~/.cache/huggingface/hub"),
+]
+
+# --- 分块参数 ---
+MAX_SUB_CHUNKS = 6        # 每段最多拆成几块
+MIN_CHUNK_CHARS = 50      # 子块最小字符数（太短的块会合并）
+SHORT_PARA_LIMIT = 50     # 短段落阈值（低于此字数尝试合并）
+BASE_THRESHOLD = 500      # 动态阈值锚点（默认 500，越小越倾向拆分）
+
+# --- Chroma ---
+COLLECTION_NAME = "rigid_chunker_demo"  # Chroma 集合名称

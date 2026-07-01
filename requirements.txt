@@ -1,0 +1,11 @@
+# 核心依赖
+chromadb>=0.5.0
+sentence-transformers>=2.2.0
+requests>=2.28.0
+
+# 可选：本地 LLM 权重加载
+# transformers>=4.35.0  # 需要本地 LLM 时取消注释
+# torch>=2.0.0          # 需要本地 LLM 时取消注释
+
+# 可选：DeepSeek / OpenAI / 通义千问 API 调用
+# 使用时设置环境变量即可，无需额外安装
