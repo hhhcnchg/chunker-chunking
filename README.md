@@ -148,3 +148,7 @@ chunker-chunking/
 ## License
 
 MIT
+
+---
+
+[English version →](README.en.md)
