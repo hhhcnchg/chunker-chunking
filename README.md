@@ -1,10 +1,4 @@
-```text
-  ____  _     _           _   ____  _                _             
- |  _ \| |__ (_) ___  ___| |_/ ___|| |__   __ _ _ __| |_ ___ _ __  
- | |_) | '_ \| |/ _ \/ __| __\___ \| '_ \ / _` | '__| __/ _ \ '__| 
- |  _ <| | | | | (_) \__ \ |_ ___) | | | | (_| | |  | ||  __/ |    
- |_| \_\_| |_|_|\___/|___/\__|____/|_| |_|\__,_|_|   \__\___|_|    
-```
+# Rigid Chunker 🧩
 
 <p align="center">
   <b>刚性段落锁定 + 柔性语义内拆</b><br>
@@ -12,40 +6,27 @@
   <img src="https://img.shields.io/badge/python-3.8+-blue?logo=python&logoColor=white" />
   <img src="https://img.shields.io/badge/license-MIT-green" />
   <img src="https://img.shields.io/badge/RAG-chunking-orange" />
-  <a href="README.en.md"><img src="https://img.shields.io/badge/README-English-0366d6" /></a>
   <a href="https://hhhcnchg.github.io/chunker-chunking/"><img src="https://img.shields.io/badge/🌐_项目主页-Live-brightgreen" /></a>
+  <a href="README.en.md"><img src="https://img.shields.io/badge/README-English-0366d6" /></a>
 </p>
 
 ---
 
-以自然段落为「高压线」永不跨越，仅在段落内部做语义拆分。专为解决传统分块中**语义断裂**和**跨段落碎片**问题而设计。
+## 它是什么
 
-<p align="center">
-  <a href="https://hhhcnchg.github.io/chunker-chunking/">🌐 项目主页</a> ·
-  <a href="README.en.md">English →</a>
-</p>
+Rigid Chunker 是一个面向 RAG（检索增强生成）的文本分块器，核心设计只有一个原则：
 
----
+> **段落边界是高压线，永不跨越。**
 
-## 核心思想
+传统分块方案（如 LangChain 的 `RecursiveCharacterTextSplitter`）按固定字数切割文本，经常把一句话切成两半、把一个论点拆到两个 chunk 里。Rigid Chunker 用自然段落作为刚性边界，只在段落内部做语义拆分，从根本上杜绝跨段落碎片。
 
-```text
-段落边界 ── 永不跨越 ── ── ── ── ── ── ── ── 
-            ┌──────────────────────┐
-  子块 A    │  完整语义单元 A       │  ← 用于检索
-            └──────────────────────┘
-            ┌──────────────────────┐
-  子块 B    │  完整语义单元 B       │
-            └──────────────────────┘
-            ┌──────────────────────┐
-  父段落    │  全文（包含 A+B）     │  ← 用于生成
-            └──────────────────────┘
-```
+## 为什么需要它
 
-- **子块** 匹配时提供精细定位
-- **父段落** 在生成阶段替换上去，避免只看碎片丢失上下文
+RAG 系统的检索质量取决于分块质量。碎片化的 chunk 会让 LLM 拿到不完整的上下文，生成错误答案。Rigid Chunker 通过三个机制保证分块质量：
 
----
+1. **段落锁定** — 每个自然段落是一个独立单元，绝不跨越
+2. **子块 + 父段落** — 子块用于精细检索，父段落用于生成时提供完整上下文
+3. **三模型降级** — 有 LLM 用 LLM，没有用 Embedding，都没有用规则，不会挂掉
 
 ## 核心特性
 
@@ -58,90 +39,9 @@
 | 🔗 **智能合并** | 短段落自动合并，目录/标题行智能附着 |
 | 📊 **动态阈值** | 基于文档段落长度分布自动计算最适切分点 |
 | ⚡ **无需 LLM** | 有 Embedding 模型即可工作，LLM 非必需 |
+| 🇨🇳 **中文优化** | 针对中文段落结构、序号体系专门设计 |
 
----
-
-## 三模型检测链
-
-```text
-Tier 1: LLM   → 语义粗切大段 + Embedding 细切
-Tier 2: Embed → bge 算句间相似度，最低处切开
-Tier 3: 规则  → 句号硬切兜底
-```
-
-> 检测不到 LLM 时会**询问用户是否配置 API Key**，不会默默降级。
-
----
-
-## 快速开始
-
-### 1. 安装依赖
-
-```bash
-pip install -r requirements.txt
-```
-
-### 2. 下载嵌入模型（可选）
-
-默认自动下载 `BAAI/bge-small-zh-v1.5`，国内可用镜像加速：
-
-```bash
-python download_model.py
-```
-
-### 3. 配置 LLM（可选）
-
-| 方式 | 操作 |
-|:-----|:-----|
-| **环境变量**（推荐） | `export DEEPSEEK_API_KEY="sk-xxx"` |
-| **交互问答** | 运行时自动询问是否配置 |
-| **本地模型** | Ollama、LM Studio 等运行时自动检测 |
-
-### 4. 运行
-
-```bash
-python rigid_chunker.py 你的文档.txt
-```
-
----
-
-## 参数说明
-
-| 参数 | 默认值 | 说明 |
-|:-----|:-------|:-----|
-| `EMBEDDING_MODEL_PATH` | `""` | 本地模型路径，留空自动下载 |
-| `EMBEDDING_MODEL_NAME` | `BAAI/bge-small-zh-v1.5` | HuggingFace 模型名 |
-| `MAX_SUB_CHUNKS` | `6` | 每段最多拆多少块 |
-| `MIN_CHUNK_CHARS` | `50` | 子块最小字符数 |
-| `SHORT_PARA_LIMIT` | `50` | 短段落阈值 |
-| `BASE_THRESHOLD` | `500` | 动态阈值锚点 |
-| `COLLECTION_NAME` | `rigid_chunker_demo` | Chroma 集合名 |
-
----
-
-## 工作原理
-
-### 阶段一：段落锚定
-
-1. 按空行切分原始段落
-2. 短段落检测与智能合并（有 LLM 时用 LLM 判断合并策略）
-3. 扫描子结构标记（`（一）...（十）`）
-
-### 阶段二：段内拆分
-
-1. 检测到子结构 → 按序拆分，每条独立成块
-2. 短段落（< 动态阈值）→ 整段保留
-3. 超长段落：LLM 粗切 → Embedding 细切 → 句号兜底
-
-### 阶段三：存储与检索
-
-- Chroma 向量数据库存储
-- 子块用于检索匹配，父段落用于生成
-- 检索结果按父段落去重
-
----
-
-## 与 LumberChunker / Meta-Chunking 对比
+## 与现有方案对比
 
 | 方面 | Rigid Chunker | LumberChunker | Meta-Chunking |
 |:-----|:--------------|:--------------|:--------------|
@@ -154,28 +54,38 @@ python rigid_chunker.py 你的文档.txt
 | **确定性** | 高（段落锁定） | 中（LLM 输出波动） | 中（LLM 输出波动） |
 | **中文优化** | ✅ 是 | ❌ 英文优先 | ❌ 英文优先 |
 
----
+## 快速体验
+
+```bash
+pip install -r requirements.txt
+python rigid_chunker.py 你的文档.txt
+```
+
+> 详细安装、配置、参数说明请查看 [USAGE.md](USAGE.md) | [English](README.en.md)
 
 ## 项目结构
 
-```text
+```
 chunker-chunking/
 ├── rigid_chunker.py            # 核心分块器
 ├── download_model.py           # 模型下载工具
 ├── .config.example             # 配置模板
 ├── requirements.txt            # Python 依赖
 ├── LICENSE                     # MIT 许可证
-├── README.md                   # 使用说明（中文）
-├── README.en.md                # 使用说明（English）
+├── README.md                   # 本文件（项目介绍）
+├── USAGE.md                    # 详细使用说明
+├── README.en.md                # English version
 ├── docs/
-│   └── index.html              # 项目主页（GitHub Pages）
+│   └── index.html              # 项目主页
 └── .github/
     └── workflows/
-        └── pages.yml           # 自动部署 workflow
+        └── pages.yml           # 自动部署
 ```
-
----
 
 ## License
 
 [MIT](LICENSE)
+
+---
+
+🌐 [项目主页](https://hhhcnchg.github.io/chunker-chunking/) · 📖 [使用说明](USAGE.md) · [English →](README.en.md)

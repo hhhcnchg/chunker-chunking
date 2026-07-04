@@ -143,10 +143,20 @@ chunker-chunking/
 ├── .config.example       # Configuration template
 ├── requirements.txt      # Python dependencies
 ├── LICENSE               # MIT License
-├── README.md             # Chinese docs
-└── README.en.md          # English docs
+├── README.md             # Project intro (Chinese)
+├── USAGE.md              # Detailed usage guide
+├── README.en.md          # English version
+├── docs/
+│   └── index.html        # Project homepage
+└── .github/
+    └── workflows/
+        └── pages.yml     # Auto-deploy workflow
 ```
 
 ## License
 
 MIT
+
+---
+
+🌐 [Project Homepage](https://hhhcnchg.github.io/chunker-chunking/) · [中文文档](README.md) · [详细使用说明](USAGE.md)
