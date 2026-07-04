@@ -13,6 +13,7 @@
   <img src="https://img.shields.io/badge/license-MIT-green" />
   <img src="https://img.shields.io/badge/RAG-chunking-orange" />
   <a href="README.en.md"><img src="https://img.shields.io/badge/README-English-0366d6" /></a>
+  <a href="https://hhhcnchg.github.io/chunker-chunking/"><img src="https://img.shields.io/badge/🌐_项目主页-Live-brightgreen" /></a>
 </p>
 
 ---
@@ -20,6 +21,7 @@
 以自然段落为「高压线」永不跨越，仅在段落内部做语义拆分。专为解决传统分块中**语义断裂**和**跨段落碎片**问题而设计。
 
 <p align="center">
+  <a href="https://hhhcnchg.github.io/chunker-chunking/">🌐 项目主页</a> ·
   <a href="README.en.md">English →</a>
 </p>
 
@@ -158,13 +160,18 @@ python rigid_chunker.py 你的文档.txt
 
 ```text
 chunker-chunking/
-├── rigid_chunker.py      # 核心分块器
-├── download_model.py     # 模型下载工具
-├── .config.example       # 配置模板
-├── requirements.txt      # Python 依赖
-├── LICENSE               # MIT 许可证
-├── README.md             # 使用说明（中文）
-└── README.en.md          # 使用说明（English）
+├── rigid_chunker.py            # 核心分块器
+├── download_model.py           # 模型下载工具
+├── .config.example             # 配置模板
+├── requirements.txt            # Python 依赖
+├── LICENSE                     # MIT 许可证
+├── README.md                   # 使用说明（中文）
+├── README.en.md                # 使用说明（English）
+├── docs/
+│   └── index.html              # 项目主页（GitHub Pages）
+└── .github/
+    └── workflows/
+        └── pages.yml           # 自动部署 workflow
 ```
 
 ---
